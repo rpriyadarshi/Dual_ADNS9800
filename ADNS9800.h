@@ -51,8 +51,6 @@ namespace adns {
 #define REG_SROM_Load_Burst                      0x62
 #define REG_Pixel_Burst                          0x64
 
-#define ENABLE_MOTION_BURST                      1
-
     // | ADNS-9800 | Arduino Uno Pins
     // | SS        | 9
     // | MO        | 11
@@ -63,7 +61,7 @@ namespace adns {
     // | AG        | Gnd
     // | DG        | Gnd
 
-    template <const int NCS>
+    template <const int SS, const int MOT>
         class controller {
 public:
         enum MotionBurst {
@@ -102,7 +100,6 @@ private:
         static void write_reg(byte reg_addr, byte data);
         static void read_motion_burst_data();
         static void copy_data();
-        static void update_motion_data();
         static void update_motion_burst_data();
         static int8_t convert_twos_compliment(byte b);
         static int16_t convert_twos_compliment(byte l, byte h);
@@ -122,46 +119,46 @@ private:
         static byte _squal;
         static byte _moved;
     };
-    template <const int NCS>
-        byte controller<NCS>::_boot_complete = 0;
+    template <const int SS, const int MOT>
+        byte controller<SS, MOT>::_boot_complete = 0;
 
-    template <const int NCS>
-        byte controller<NCS>::_data[EndData];
-    template <const int NCS>
-        uint16_t controller<NCS>::_ux = 0;
-    template <const int NCS>
-        uint16_t controller<NCS>::_uy = 0;
-    template <const int NCS>
-        uint16_t controller<NCS>::_ux_dist = 0;
-    template <const int NCS>
-        uint16_t controller<NCS>::_uy_dist = 0;
+    template <const int SS, const int MOT>
+        byte controller<SS, MOT>::_data[EndData];
+    template <const int SS, const int MOT>
+        uint16_t controller<SS, MOT>::_ux = 0;
+    template <const int SS, const int MOT>
+        uint16_t controller<SS, MOT>::_uy = 0;
+    template <const int SS, const int MOT>
+        uint16_t controller<SS, MOT>::_ux_dist = 0;
+    template <const int SS, const int MOT>
+        uint16_t controller<SS, MOT>::_uy_dist = 0;
 
-    template <const int NCS>
-        byte controller<NCS>::_mot = 0;
-    template <const int NCS>
-        byte controller<NCS>::_fault = 0;
-    template <const int NCS>
-        byte controller<NCS>::_squal = 0;
-    template <const int NCS>
-        byte controller<NCS>::_moved = 0;
+    template <const int SS, const int MOT>
+        byte controller<SS, MOT>::_mot = 0;
+    template <const int SS, const int MOT>
+        byte controller<SS, MOT>::_fault = 0;
+    template <const int SS, const int MOT>
+        byte controller<SS, MOT>::_squal = 0;
+    template <const int SS, const int MOT>
+        byte controller<SS, MOT>::_moved = 0;
 
-    template <const int NCS>
-        void controller<NCS>::reset_xy_dist() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::reset_xy_dist() {
         _ux = _uy = _ux_dist = _uy_dist = 0;
     }
 
-    template <const int NCS>
-        void controller<NCS>::com_begin() {
-        digitalWrite(NCS, LOW);
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::com_begin() {
+        digitalWrite(SS, LOW);
     }
 
-    template <const int NCS>
-        void controller<NCS>::com_end() {
-        digitalWrite(NCS, HIGH);
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::com_end() {
+        digitalWrite(SS, HIGH);
     }
 
-    template <const int NCS>
-        byte controller<NCS>::read_reg(byte reg_addr) {
+    template <const int SS, const int MOT>
+        byte controller<SS, MOT>::read_reg(byte reg_addr) {
         com_begin();
 
         // send adress of the register, with MSBit = 0 to indicate it's a read
@@ -177,8 +174,8 @@ private:
         return data;
     }
 
-    template <const int NCS>
-        void controller<NCS>::write_reg(byte reg_addr, byte data) {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::write_reg(byte reg_addr, byte data) {
         com_begin();
 
         // send adress of the register, with MSBit = 1 to indicate it's a write
@@ -191,8 +188,8 @@ private:
         delayMicroseconds(100); // tSWW/tSWR (=120us) minus tSCLK-_ncs. Could be shortened, but is looks like a safe lower bound 
     }
 
-    template <const int NCS>
-        void controller<NCS>::read_motion_burst_data() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::read_motion_burst_data() {
         com_begin();
 
         // send adress of the register, with MSBit = 1 to indicate it's a write
@@ -207,15 +204,15 @@ private:
         delayMicroseconds(1); //  tBEXIT
     }
 
-    template <const int NCS>
-        uint16_t controller<NCS>::join_byte(byte l, byte h){
+    template <const int SS, const int MOT>
+        uint16_t controller<SS, MOT>::join_byte(byte l, byte h){
         uint16_t b = l;
         b |= (h << 8);
         return b;
     }
 
-    template <const int NCS>
-        int8_t controller<NCS>::convert_twos_compliment(byte b){
+    template <const int SS, const int MOT>
+        int8_t controller<SS, MOT>::convert_twos_compliment(byte b){
         int8_t val = b;
         //Convert from 2's complement
         if(b & 0x80) {
@@ -224,8 +221,8 @@ private:
         return val;
     }
 
-    template <const int NCS>
-        int16_t controller<NCS>::convert_twos_compliment(uint16_t b){
+    template <const int SS, const int MOT>
+        int16_t controller<SS, MOT>::convert_twos_compliment(uint16_t b){
         int16_t val = b;
         //Convert from 2's complement
         if (b & 0x8000) {
@@ -234,14 +231,14 @@ private:
         return val;
     }
 
-    template <const int NCS>
-        int16_t controller<NCS>::convert_twos_compliment(byte l, byte h){
+    template <const int SS, const int MOT>
+        int16_t controller<SS, MOT>::convert_twos_compliment(byte l, byte h){
         uint16_t b = join_byte(l, h);
         return convert_twos_compliment(b);
     }
 
-    template <const int NCS>
-        void controller<NCS>::copy_data()
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::copy_data()
     {
         _squal = _data[SQUAL];
         _ux = join_byte(_data[Delta_X_L], _data[Delta_X_H]);
@@ -250,27 +247,8 @@ private:
         _uy_dist += _uy;
     }
 
-    template <const int NCS>
-        void controller<NCS>::update_motion_data() {
-        if(_boot_complete != 9) return;
-        com_begin();
-        _data[Motion] = read_reg(REG_Motion);
-        _data[SQUAL] = read_reg(REG_SQUAL);
-        _mot = _data[Motion] & 0x80;
-        _fault = _data[Motion] & 0x40;
-        if (!_fault && _mot) {
-            _data[Delta_X_L] = read_reg(REG_Delta_X_L);
-            _data[Delta_X_H] = read_reg(REG_Delta_X_H);
-            _data[Delta_Y_L] = read_reg(REG_Delta_Y_L);
-            _data[Delta_Y_H] = read_reg(REG_Delta_Y_H);
-            copy_data();
-            _moved = 1;
-        }
-        com_end();
-    }
-
-    template <const int NCS>
-        void controller<NCS>::update_motion_burst_data() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::update_motion_burst_data() {
         if(_boot_complete != 9) return;
         com_begin();
         read_motion_burst_data();
@@ -283,8 +261,8 @@ private:
         com_end();
     }
 
-    template <const int NCS>
-        void controller<NCS>::upload_firmware() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::upload_firmware() {
         // send the firmware to the chip, cf p.18 of the datasheet
         Serial.println("Uploading firmware...");
 
@@ -316,8 +294,8 @@ private:
         com_end();
     }
 
-    template <const int NCS>
-        void controller<NCS>::perform_startup() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::perform_startup() {
         com_end(); // ensure that the serial port is reset
         com_begin(); // ensure that the serial port is reset
         com_end(); // ensure that the serial port is reset
@@ -351,8 +329,8 @@ private:
         Serial.println("Optical Chip Initialized");
     }
 
-    template <const int NCS>
-        void controller<NCS>::display_registers() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::display_registers() {
         int oreg[7] = { 
             REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
         const char* oregname[] = {
@@ -380,8 +358,8 @@ private:
         com_end();
     }
 
-    template <const int NCS>
-        void controller<NCS>::printMotionData() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::printMotionData() {
         Serial.print(_data[Delta_X_L], BIN);
         Serial.print("(");
         Serial.print(convert_twos_compliment(_data[Delta_X_L]));
@@ -402,15 +380,11 @@ private:
         Serial.println("");
     }
 
-    template <const int NCS>
-        void controller<NCS>::setup() {
-        pinMode (NCS, OUTPUT);
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::setup() {
+        pinMode (SS, OUTPUT);
 
-#if ENABLE_MOTION_BURST
-        attachInterrupt(0, update_motion_data, FALLING);
-#else
-        attachInterrupt(0, update_motion_burst_data, FALLING);
-#endif
+        attachInterrupt(MOT, update_motion_burst_data, FALLING);
 
         SPI.begin();
         SPI.setDataMode(SPI_MODE3);
@@ -423,8 +397,8 @@ private:
         _boot_complete=9;
     }
 
-    template <const int NCS>
-        void controller<NCS>::loop() {
+    template <const int SS, const int MOT>
+        void controller<SS, MOT>::loop() {
         if (! _moved) return;
         if(_mot) {
             clear();
