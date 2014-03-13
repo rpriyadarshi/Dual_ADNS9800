@@ -264,7 +264,9 @@ private:
     template <const int SS, const int MOT>
         void controller<SS, MOT>::upload_firmware() {
         // send the firmware to the chip, cf p.18 of the datasheet
-        Serial.println("Uploading firmware...");
+        Serial.print("-");
+        Serial.print(SS);
+        Serial.println("- Uploading firmware...");
 
         // set the configuration_IV register in 3k firmware mode
         write_reg(REG_Configuration_IV, 0x02); // bit 1 = 1 for 3k mode, other bits are reserved 
@@ -326,7 +328,9 @@ private:
         // 0xA4 = 8200, maximum
         write_reg(REG_Configuration_I, 0xA4);
 
-        Serial.println("Optical Chip Initialized");
+        Serial.print("-");
+        Serial.print(SS);
+        Serial.println("- Optical Chip Initialized");
     }
 
     template <const int SS, const int MOT>
@@ -343,11 +347,13 @@ private:
         for(rctr = 0; rctr < 5; rctr++){
             SPI.transfer(oreg[rctr]);
             delay(1);
-            Serial.println("---");
+            Serial.print("-");
+            Serial.print(SS);
+            Serial.print("- ");
             Serial.print(oregname[rctr]);
             Serial.print(" (0x");
             Serial.print(oreg[rctr],HEX);
-            Serial.println(")");
+            Serial.print(")" );
             regres = SPI.transfer(0);
             Serial.print(regres,BIN);  
             Serial.print(" (0x");

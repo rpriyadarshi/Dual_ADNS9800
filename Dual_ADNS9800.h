@@ -59,6 +59,9 @@ void adns_ctrl<SS, MOT>::get_squal(uint16_t s)
 template <const int SS, const int MOT>
 void adns_ctrl<SS, MOT>::get_fault()
 {
+    Serial.print("-");
+    Serial.print(SS);
+    Serial.print("- ");
     Serial.println("XY_LASER is shorted to GND");
 }
 
@@ -70,31 +73,31 @@ void adns_ctrl<SS, MOT>::clear()
 template <const int SS, const int MOT>
 void adns_ctrl<SS, MOT>::print_xy_serial()
 {
-    Serial.print(SS);
-    Serial.print(" x = ");
+    Serial.print("(");
     Serial.print(_x / x_scale);
-    Serial.print(" | ");
-    Serial.print("y = ");
-    Serial.println(_y / y_scale);
+    Serial.print(", ");
+    Serial.print(_y / y_scale);
+    Serial.println(")");
 }
 
 template <const int SS, const int MOT>
 void adns_ctrl<SS, MOT>::print_xy_dist_serial()
 {
-    Serial.print(SS);
-    Serial.print(" x = ");
+    Serial.print("(");
     Serial.print(_x_dist / x_scale);
-    Serial.print(" | ");
-    Serial.print("y = ");
-    Serial.println(_y_dist / y_scale);
+    Serial.print(", ");
+    Serial.print(_y_dist / y_scale);
+    Serial.println(")");
 }
 
 template <const int SS, const int MOT>
 void adns_ctrl<SS, MOT>::print_squal_serial()
 {
+    Serial.print("-");
     Serial.print(SS);
-    Serial.print(" SQUAL:");
-    Serial.println(_squal);
+    Serial.print("- (");
+    Serial.print(_squal);
+    Serial.print(")");
 }
 
 template <const int SS, const int MOT>
