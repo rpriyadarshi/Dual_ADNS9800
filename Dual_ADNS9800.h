@@ -1,115 +1,140 @@
 #include "ADNS9800.h"
 
-const int16_t x_scale = 1;
-const int16_t y_scale = 1;
+const uint16_t x_scale = 1;
+const uint16_t y_scale = 1;
 
-template <const int SS, const int MOT>
+template <const int SS, const int MOT, const int RST>
 class adns_ctrl : 
-public adns::controller<SS, MOT> {
+public adns::controller<SS, MOT, RST> {
 public:
-    adns_ctrl() {
-    }
-    ~adns_ctrl() {
-    }
+  adns_ctrl() {
+  }
+  ~adns_ctrl() {
+  }
 
-    void setup();
-    void loop();
+  void setup();
+  void loop();
 
-    void get_xy(int16_t x, int16_t y);
-    void get_xy_dist(int16_t x_sum, int16_t y_sum);
-    void get_squal(uint16_t s);
-    void get_fault();
-    void clear();
-
-private:
-    void print_xy_serial();
-    void print_xy_dist_serial();
-    void print_squal_serial();
+  void get_xy(uint16_t x, uint16_t y);
+  void get_xy_dist(uint16_t x_sum, uint16_t y_sum);
+  void get_squal(uint16_t s);
+  void get_fault();
+  void clear();
+  void print_serial();
 
 private:
-    int16_t _x;
-    int16_t _y;
-    int16_t _x_dist;
-    int16_t _y_dist;
-    uint16_t _squal;
+  void print_header_serial();
+  void print_xy_serial();
+  void print_xy_dist_serial();
+  void print_squal_serial();
+  void print_nl_serial();
+
+private:
+  uint16_t _x;
+  uint16_t _y;
+  uint16_t _x_dist;
+  uint16_t _y_dist;
+  uint16_t _squal;
 };
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::get_xy(int16_t x, int16_t y)
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::get_xy(uint16_t x, uint16_t y)
 {
-    _x = x;
-    _y = y;
+  _x = x;
+  _y = y;
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::get_xy_dist(int16_t x_dist, int16_t y_dist)
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::get_xy_dist(uint16_t x_dist, uint16_t y_dist)
 {
-    _x_dist = x_dist;
-    _y_dist = y_dist;
-    print_xy_dist_serial();
+  _x_dist = x_dist;
+  _y_dist = y_dist;
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::get_squal(uint16_t s)
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::get_squal(uint16_t s)
 {
-    _squal = s;
-    print_squal_serial();
+  _squal = s;
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::get_fault()
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::get_fault()
 {
-    Serial.print("-");
-    Serial.print(SS);
-    Serial.print("- ");
-    Serial.println("XY_LASER is shorted to GND");
+  Serial.print(SS);
+  Serial.print(" ");
+  Serial.println("XY_LASER is shorted to GND");
+  Serial.print(" ");
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::clear()
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::clear()
 {
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::print_xy_serial()
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::print_header_serial()
 {
-    Serial.print("(");
-    Serial.print(_x / x_scale);
-    Serial.print(", ");
-    Serial.print(_y / y_scale);
-    Serial.println(")");
+  Serial.print("@ ");
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::print_xy_dist_serial()
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::print_xy_serial()
 {
-    Serial.print("(");
-    Serial.print(_x_dist / x_scale);
-    Serial.print(", ");
-    Serial.print(_y_dist / y_scale);
-    Serial.println(")");
+  Serial.print(adns::controller<SS, MOT, RST>::convert_twos_compliment(_x));
+  //Serial.print(_x);
+  Serial.print(" ");
+  Serial.print(adns::controller<SS, MOT, RST>::convert_twos_compliment(_y));
+  //Serial.print(_y);
+  Serial.print(" ");
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::print_squal_serial()
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::print_xy_dist_serial()
 {
-    Serial.print("-");
-    Serial.print(SS);
-    Serial.print("- (");
-    Serial.print(_squal);
-    Serial.print(")");
+  Serial.print(adns::controller<SS, MOT, RST>::convert_twos_compliment(_x_dist));
+  //Serial.print(_x_dist);
+  Serial.print(" ");
+  Serial.print(adns::controller<SS, MOT, RST>::convert_twos_compliment(_y_dist));
+  //Serial.print(_y_dist);
+  Serial.print(" ");
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::setup()
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::print_squal_serial()
 {
-    adns::controller<SS, MOT>::setup();
+  Serial.print(SS);
+  Serial.print(" ");
+  Serial.print(_squal);
+  Serial.print(" ");
 }
 
-template <const int SS, const int MOT>
-void adns_ctrl<SS, MOT>::loop()
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::print_nl_serial()
 {
-    adns::controller<SS, MOT>::loop();
+  Serial.println("");
 }
+
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::print_serial()
+{
+  print_header_serial();
+  print_squal_serial();
+  print_xy_serial();
+  print_xy_dist_serial();
+  print_nl_serial();
+}
+
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::setup()
+{
+  adns::controller<SS, MOT, RST>::setup();
+}
+
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::loop()
+{
+  adns::controller<SS, MOT, RST>::loop();
+}
+
 
 

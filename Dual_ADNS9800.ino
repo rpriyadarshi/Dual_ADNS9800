@@ -3,11 +3,11 @@
 #include <LiquidCrystal.h>
 #include "Dual_ADNS9800.h"
 
-adns_ctrl<9, 0> ac9;
-adns_ctrl<10, 1> ac10;
+adns_ctrl<9, 0, 4> ac9;
+adns_ctrl<10, 1, 4> ac10;
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     ac9.setup();
     ac10.setup();
 }
