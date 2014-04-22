@@ -83,12 +83,11 @@ public:
     virtual void get_xy(uint16_t x, uint16_t y) = 0;
     virtual void get_xy_dist(uint16_t x_sum, uint16_t y_sum) = 0;
     virtual void get_squal(uint16_t s) = 0;
-    virtual void get_fault() = 0;
     virtual void clear() = 0;
     virtual void print_serial() = 0;
 
     void reset_xy_dist();
-    
+
 protected:
     int8_t convert_twos_compliment(byte b);
     int16_t convert_twos_compliment(byte l, byte h);
@@ -108,6 +107,10 @@ private:
     static void update_motion_burst_data();
     static uint16_t join_byte(byte l, byte h);
 
+    void print_fault();
+    void print_lp_valid();
+    void print_op_mode();
+
 private:
     static byte _boot_complete;
     static byte _data[EndData];
@@ -118,6 +121,8 @@ private:
 
     static byte _mot;
     static byte _fault;
+    static byte _lp_valid;
+    static byte _op_mode[2];
     static byte _squal;
     static byte _moved;
 
@@ -142,6 +147,11 @@ private:
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_fault = 0;
   template <const int SS, const int MOT, const int RST>
+    byte controller<SS, MOT, RST>::_lp_valid = 0;
+  template <const int SS, const int MOT, const int RST>
+    byte controller<SS, MOT, RST>::_op_mode[] = {
+    0, 0          };
+  template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_squal = 0;
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_moved = 0;
@@ -152,6 +162,7 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::reset_xy_dist() {
     _ux = _uy = _ux_dist = _uy_dist = 0;
+    _reset = HIGH;
     Serial.println("# RESET");
   }
 
@@ -221,22 +232,26 @@ private:
 
   template <const int SS, const int MOT, const int RST>
     int8_t controller<SS, MOT, RST>::convert_twos_compliment(byte b){
-    int8_t val = b;
     //Convert from 2's complement
     if(b & 0x80) {
-      val = -1 * ((b ^ 0xff) + 1);
+      //return -1 * ((b ^ 0xff) + 1);
+      return -(0x80 - (0x7f & b));
+    } 
+    else {
+      return b;
     }
-    return val;
   }
 
   template <const int SS, const int MOT, const int RST>
     int16_t controller<SS, MOT, RST>::convert_twos_compliment(uint16_t b){
-    int16_t val = b;
     //Convert from 2's complement
     if (b & 0x8000) {
-      val = -1 * ((b ^ 0xffff) + 1);
+      //return -1 * ((b ^ 0xffff) + 1);
+      return -(0x8000 - (0x7fff & b));
+    } 
+    else {
+      return b;
     }
-    return val;
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -262,6 +277,9 @@ private:
     read_motion_burst_data();
     _mot = _data[Motion] & 0x80;
     _fault = _data[Motion] & 0x40;
+    _lp_valid = _data[Motion] & 0x20;
+    _op_mode[0] = _data[Motion] & 0x02;
+    _op_mode[1] = _data[Motion] & 0x04;
     if (!_fault && _mot) {
       copy_data();
       _moved = 1;
@@ -344,9 +362,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[7] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        };
     byte regres;
 
     com_begin();
@@ -373,6 +391,43 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
+    void controller<SS, MOT, RST>::print_fault()
+  {
+    if (! _fault) return;
+    _fault = 0;
+    Serial.print("# [");
+    Serial.print(SS);
+    Serial.print("] ");
+    Serial.println("ERROR: Fault detected, XY_LASER is shorted to GND");
+  }
+
+  template <const int SS, const int MOT, const int RST>
+    void controller<SS, MOT, RST>::print_lp_valid()
+  {
+    if (_lp_valid) return;
+    _lp_valid = 0;
+    Serial.print("# [");
+    Serial.print(SS);
+    Serial.print("] ");
+    Serial.println("ERROR: Laser power register values do not have complementary values");
+  }
+
+  template <const int SS, const int MOT, const int RST>
+    void controller<SS, MOT, RST>::print_op_mode()
+  {
+    byte mode = _op_mode[0];
+    mode |= (_op_mode[1] << 1);
+    if (! mode) return;
+    _op_mode[0] = 0;
+    _op_mode[1] = 0;
+    Serial.print("# [");
+    Serial.print(SS);
+    Serial.print("] ");
+    Serial.print("REST Mode");
+    Serial.println(mode);
+  }
+
+  template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::setup() {
     pinMode (SS, OUTPUT);
     pinMode (RST, INPUT_PULLUP);
@@ -393,6 +448,14 @@ private:
 
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::loop() {
+    print_fault();
+    print_lp_valid();
+    print_op_mode();
+    if (_fault || ! _lp_valid) return;
+    _reset = digitalRead(RST);
+    if (_reset == LOW) {
+      reset_xy_dist();
+    }
     if (! _moved) return;
     if(_mot) {
       clear();
@@ -402,16 +465,14 @@ private:
       print_serial();
       delay(3);
     }
-    if (_fault) {
-      get_fault();
-    }
-    _reset = digitalRead(RST);
-    if (_reset == LOW) {
-      reset_xy_dist();
-    }
     _moved = 0;
   }
 };
+
+
+
+
+
 
 
 
