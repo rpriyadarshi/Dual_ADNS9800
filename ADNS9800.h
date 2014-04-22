@@ -225,8 +225,9 @@ private:
 
   template <const int SS, const int MOT, const int RST>
     uint16_t controller<SS, MOT, RST>::join_byte(byte l, byte h){
-    uint16_t b = l;
-    b |= (h << 8);
+    uint16_t b = h;
+    b <<= 8;
+    b |= l;
     return b;
   }
 
@@ -399,6 +400,7 @@ private:
     Serial.print(SS);
     Serial.print("] ");
     Serial.println("ERROR: Fault detected, XY_LASER is shorted to GND");
+    delay(100);
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -410,6 +412,7 @@ private:
     Serial.print(SS);
     Serial.print("] ");
     Serial.println("ERROR: Laser power register values do not have complementary values");
+    delay(100);
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -425,6 +428,7 @@ private:
     Serial.print("] ");
     Serial.print("REST Mode");
     Serial.println(mode);
+    delay(100);
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -449,7 +453,7 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::loop() {
     print_fault();
-    print_lp_valid();
+    //print_lp_valid();
     print_op_mode();
     if (_fault || ! _lp_valid) return;
     _reset = digitalRead(RST);
