@@ -36,7 +36,10 @@ namespace adns {
 #define REG_Frame_Period_Min_Bound_Upper         0x1d
 #define REG_Shutter_Max_Bound_Lower              0x1e
 #define REG_Shutter_Max_Bound_Upper              0x1f
-#define REG_LASER_CTRL0                          0x20
+#define REG_LASER_CTRL0                          0x20 // Should be written as 0x80 (Bit 7 complementary to Bit 7 in LASER_CTRL1, which is 0) 
+#define REG_LASER_CTRL1                          0x21 // Not in Datasheet (Bit 7 must be Complement to Bit 7 of LASER_CTRL0, Bit 6 must be 1, Bit 2 must apparently be 1, too) (After inititialisation the register is 0x42) 
+#define REG_LASER_CFG0                           0x22 // Not in Datasheet (Laser Power Level) 
+#define REG_LASER_CFG1                           0x23 // Not in Datasheet (Must be Complement of LASER_CFG0) 
 #define REG_Observation                          0x24
 #define REG_Data_Out_Lower                       0x25
 #define REG_Data_Out_Upper                       0x26
@@ -122,7 +125,7 @@ private:
     static byte _mot;
     static byte _fault;
     static byte _lp_valid;
-    static byte _op_mode[2];
+    static byte _mode;
     static byte _squal;
     static byte _moved;
 
@@ -149,8 +152,7 @@ private:
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_lp_valid = 0;
   template <const int SS, const int MOT, const int RST>
-    byte controller<SS, MOT, RST>::_op_mode[] = {
-    0, 0          };
+    byte controller<SS, MOT, RST>::_mode = 0;
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_squal = 0;
   template <const int SS, const int MOT, const int RST>
@@ -279,9 +281,9 @@ private:
     _mot = _data[Motion] & 0x80;
     _fault = _data[Motion] & 0x40;
     _lp_valid = _data[Motion] & 0x20;
-    _op_mode[0] = _data[Motion] & 0x02;
-    _op_mode[1] = _data[Motion] & 0x04;
-    if (!_fault && _mot) {
+    _mode = _data[Motion] & 0x02;
+    _mode |= (_data[Motion] & 0x04 << 1);
+    if (!_fault && _mot && _lp_valid) {
       copy_data();
       _moved = 1;
     }
@@ -363,9 +365,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[7] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
     byte regres;
 
     com_begin();
@@ -394,41 +396,29 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::print_fault()
   {
-    if (! _fault) return;
-    _fault = 0;
     Serial.print("# [");
     Serial.print(SS);
     Serial.print("] ");
     Serial.println("ERROR: Fault detected, XY_LASER is shorted to GND");
-    delay(100);
   }
 
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::print_lp_valid()
   {
-    if (_lp_valid) return;
-    _lp_valid = 0;
     Serial.print("# [");
     Serial.print(SS);
     Serial.print("] ");
     Serial.println("ERROR: Laser power register values do not have complementary values");
-    delay(100);
   }
 
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::print_op_mode()
   {
-    byte mode = _op_mode[0];
-    mode |= (_op_mode[1] << 1);
-    if (! mode) return;
-    _op_mode[0] = 0;
-    _op_mode[1] = 0;
     Serial.print("# [");
     Serial.print(SS);
     Serial.print("] ");
-    Serial.print("REST Mode");
-    Serial.println(mode);
-    delay(100);
+    Serial.print("REST Mode ");
+    Serial.println(_mode);
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -452,10 +442,21 @@ private:
 
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::loop() {
-    print_fault();
-    //print_lp_valid();
-    print_op_mode();
-    if (_fault || ! _lp_valid) return;
+    if (_fault) {
+      print_fault();
+      delay(100);
+      return;
+    }
+    if (! _lp_valid) {
+      print_lp_valid();
+      delay(100);
+      return;
+    }
+    if (_mode) {
+      print_op_mode();
+      delay(100);
+      return;
+    }
     _reset = digitalRead(RST);
     if (_reset == LOW) {
       reset_xy_dist();
@@ -472,6 +473,7 @@ private:
     _moved = 0;
   }
 };
+
 
 
 
