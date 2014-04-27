@@ -17,7 +17,8 @@ public:
 
   void get_xy(uint16_t x, uint16_t y);
   void get_xy_dist(uint16_t x_sum, uint16_t y_sum);
-  void get_squal(uint16_t s);
+  void get_squal(byte s);
+
   void clear();
   void print_serial();
 
@@ -33,7 +34,7 @@ private:
   uint16_t _y;
   uint16_t _x_dist;
   uint16_t _y_dist;
-  uint16_t _squal;
+  byte _squal;
 };
 
 template <const int SS, const int MOT, const int RST>
@@ -51,7 +52,7 @@ void adns_ctrl<SS, MOT, RST>::get_xy_dist(uint16_t x_dist, uint16_t y_dist)
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::get_squal(uint16_t s)
+void adns_ctrl<SS, MOT, RST>::get_squal(byte s)
 {
   _squal = s;
 }
@@ -65,6 +66,8 @@ template <const int SS, const int MOT, const int RST>
 void adns_ctrl<SS, MOT, RST>::print_header_serial()
 {
   Serial.print("@ ");
+  Serial.print(SS);
+  Serial.print(" ");
 }
 
 template <const int SS, const int MOT, const int RST>
@@ -92,8 +95,6 @@ void adns_ctrl<SS, MOT, RST>::print_xy_dist_serial()
 template <const int SS, const int MOT, const int RST>
 void adns_ctrl<SS, MOT, RST>::print_squal_serial()
 {
-  Serial.print(SS);
-  Serial.print(" ");
   Serial.print(_squal);
   Serial.print(" ");
 }
@@ -125,6 +126,7 @@ void adns_ctrl<SS, MOT, RST>::loop()
 {
   adns::controller<SS, MOT, RST>::loop();
 }
+
 
 
 

@@ -55,7 +55,7 @@ namespace adns {
 #define REG_Pixel_Burst                          0x64
 
   // | ADNS-9800 | Arduino Uno Pins
-  // | SS        | 9, 10 -> Green wires
+  // | SS        | 4, 5 -> Green wires
   // | MO        | 11
   // | SC        | 13
   // | MI        | 12
@@ -85,15 +85,14 @@ public:
 
     virtual void get_xy(uint16_t x, uint16_t y) = 0;
     virtual void get_xy_dist(uint16_t x_sum, uint16_t y_sum) = 0;
-    virtual void get_squal(uint16_t s) = 0;
+    virtual void get_squal(byte s) = 0;
+
     virtual void clear() = 0;
     virtual void print_serial() = 0;
 
     void reset_xy_dist();
 
 protected:
-    int8_t convert_twos_compliment(byte b);
-    int16_t convert_twos_compliment(byte l, byte h);
     int16_t convert_twos_compliment(uint16_t u);
 
 private:
@@ -110,9 +109,12 @@ private:
     static void update_motion_burst_data();
     static uint16_t join_byte(byte l, byte h);
 
+    void print_observation();
+
     void print_fault();
     void print_lp_valid();
     void print_op_mode();
+    void print_frame_pix_first();
 
 private:
     static byte _boot_complete;
@@ -122,15 +124,18 @@ private:
     static uint16_t _ux_dist;
     static uint16_t _uy_dist;
 
-    static byte _mot;
+    static byte _motion;
     static byte _fault;
     static byte _lp_valid;
     static byte _mode;
+    static byte _frame_pix_first;
     static byte _squal;
+    static byte _observation;
     static byte _moved;
 
     static int _reset;
   };
+  
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_boot_complete = 0;
 
@@ -146,7 +151,7 @@ private:
     uint16_t controller<SS, MOT, RST>::_uy_dist = 0;
 
   template <const int SS, const int MOT, const int RST>
-    byte controller<SS, MOT, RST>::_mot = 0;
+    byte controller<SS, MOT, RST>::_motion = 0;
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_fault = 0;
   template <const int SS, const int MOT, const int RST>
@@ -154,7 +159,11 @@ private:
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_mode = 0;
   template <const int SS, const int MOT, const int RST>
+    byte controller<SS, MOT, RST>::_frame_pix_first = 0;
+  template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_squal = 0;
+  template <const int SS, const int MOT, const int RST>
+    byte controller<SS, MOT, RST>::_observation = 0;
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_moved = 0;
 
@@ -234,18 +243,6 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    int8_t controller<SS, MOT, RST>::convert_twos_compliment(byte b){
-    //Convert from 2's complement
-    if(b & 0x80) {
-      //return -1 * ((b ^ 0xff) + 1);
-      return -(0x80 - (0x7f & b));
-    } 
-    else {
-      return b;
-    }
-  }
-
-  template <const int SS, const int MOT, const int RST>
     int16_t controller<SS, MOT, RST>::convert_twos_compliment(uint16_t b){
     //Convert from 2's complement
     if (b & 0x8000) {
@@ -258,15 +255,8 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    int16_t controller<SS, MOT, RST>::convert_twos_compliment(byte l, byte h){
-    uint16_t b = join_byte(l, h);
-    return convert_twos_compliment(b);
-  }
-
-  template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::copy_data()
   {
-    _squal = _data[SQUAL];
     _ux = join_byte(_data[Delta_X_L], _data[Delta_X_H]);
     _uy = join_byte(_data[Delta_Y_L], _data[Delta_Y_H]);
     _ux_dist += _ux;
@@ -278,12 +268,17 @@ private:
     if(_boot_complete != 9) return;
     com_begin();
     read_motion_burst_data();
-    _mot = _data[Motion] & 0x80;
+
+    _motion = _data[Motion] & 0x80;
     _fault = _data[Motion] & 0x40;
     _lp_valid = _data[Motion] & 0x20;
     _mode = _data[Motion] & 0x02;
     _mode |= (_data[Motion] & 0x04 << 1);
-    if (!_fault && _mot && _lp_valid) {
+    _frame_pix_first = _data[Motion] & 0x01;
+    _observation = _data[Observation];
+    _squal = _data[SQUAL];
+
+    if (!_fault && _motion && _lp_valid && (_observation == 0x7f)) {
       copy_data();
       _moved = 1;
     }
@@ -365,9 +360,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[7] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
     byte regres;
 
     com_begin();
@@ -422,6 +417,27 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
+    void controller<SS, MOT, RST>::print_frame_pix_first()
+  {
+    Serial.print("# [");
+    Serial.print(SS);
+    Serial.print("] ");
+    Serial.print("Frame Pix First ");
+    Serial.println(_frame_pix_first);
+  }
+
+  template <const int SS, const int MOT, const int RST>
+    void controller<SS, MOT, RST>::print_observation()
+  {
+    Serial.print("# [");
+    Serial.print(SS);
+    Serial.print("] ");
+    Serial.print("Observation Error [");
+    Serial.print(_observation, BIN);
+    Serial.println("]");
+  }
+
+  template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::setup() {
     pinMode (SS, OUTPUT);
     pinMode (RST, INPUT_PULLUP);
@@ -457,12 +473,17 @@ private:
       delay(100);
       return;
     }
+    if (_observation != 0x7f) {
+      print_observation();
+      _observation = 0x7f;
+      return;
+    }
     _reset = digitalRead(RST);
     if (_reset == LOW) {
       reset_xy_dist();
     }
     if (! _moved) return;
-    if(_mot) {
+    if(_motion) {
       clear();
       get_squal(_squal);
       get_xy(_ux, _uy);
@@ -473,6 +494,14 @@ private:
     _moved = 0;
   }
 };
+
+
+
+
+
+
+
+
 
 
 
