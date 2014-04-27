@@ -20,14 +20,14 @@ public:
   void get_squal(byte s);
 
   void clear();
-  void print_serial();
+  void print();
 
 private:
-  void print_header_serial();
-  void print_xy_serial();
-  void print_xy_dist_serial();
-  void print_squal_serial();
-  void print_nl_serial();
+  void print_header();
+  void print_xy();
+  void print_xy_dist();
+  void print_squal();
+  void print_nl();
 
 private:
   uint16_t _x;
@@ -63,7 +63,7 @@ void adns_ctrl<SS, MOT, RST>::clear()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_header_serial()
+void adns_ctrl<SS, MOT, RST>::print_header()
 {
   Serial.print("@ ");
   Serial.print(SS);
@@ -71,7 +71,7 @@ void adns_ctrl<SS, MOT, RST>::print_header_serial()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_xy_serial()
+void adns_ctrl<SS, MOT, RST>::print_xy()
 {
   int16_t x = adns::controller<SS, MOT, RST>::convert_twos_compliment(_x);
   int16_t y = adns::controller<SS, MOT, RST>::convert_twos_compliment(_y);
@@ -82,7 +82,7 @@ void adns_ctrl<SS, MOT, RST>::print_xy_serial()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_xy_dist_serial()
+void adns_ctrl<SS, MOT, RST>::print_xy_dist()
 {
   int16_t x_dist = adns::controller<SS, MOT, RST>::convert_twos_compliment(_x_dist);
   int16_t y_dist = adns::controller<SS, MOT, RST>::convert_twos_compliment(_y_dist);
@@ -93,26 +93,26 @@ void adns_ctrl<SS, MOT, RST>::print_xy_dist_serial()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_squal_serial()
+void adns_ctrl<SS, MOT, RST>::print_squal()
 {
   Serial.print(_squal);
   Serial.print(" ");
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_nl_serial()
+void adns_ctrl<SS, MOT, RST>::print_nl()
 {
   Serial.println("");
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_serial()
+void adns_ctrl<SS, MOT, RST>::print()
 {
-  print_header_serial();
-  print_squal_serial();
-  print_xy_serial();
-  print_xy_dist_serial();
-  print_nl_serial();
+  print_header();
+  print_squal();
+  print_xy();
+  print_xy_dist();
+  print_nl();
 }
 
 template <const int SS, const int MOT, const int RST>

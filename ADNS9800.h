@@ -88,7 +88,7 @@ public:
     virtual void get_squal(byte s) = 0;
 
     virtual void clear() = 0;
-    virtual void print_serial() = 0;
+    virtual void print() = 0;
 
     void reset_xy_dist();
 
@@ -350,7 +350,7 @@ private:
     // 0x44 = 3400, default
     // 0x8e = 7100
     // 0xA4 = 8200, maximum
-    write_reg(REG_Configuration_I, 0xA4);
+    write_reg(REG_Configuration_I, 0x01);
 
     Serial.print("# [");
     Serial.print(SS);
@@ -359,10 +359,10 @@ private:
 
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
-    int oreg[7] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 };
+    int oreg[] = { 
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
     byte regres;
 
     com_begin();
@@ -404,6 +404,8 @@ private:
     Serial.print(SS);
     Serial.print("] ");
     Serial.println("ERROR: Laser power register values do not have complementary values");
+    // Avoid too many messages
+    delay(100);
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -444,13 +446,9 @@ private:
 
     attachInterrupt(MOT, update_motion_burst_data, FALLING);
 
-    SPI.begin();
-    SPI.setDataMode(SPI_MODE3);
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setClockDivider(8);
-
     perform_startup();  
     display_registers();
+
     delay(100);
     _boot_complete=SS;
     reset_xy_dist();
@@ -460,17 +458,14 @@ private:
     void controller<SS, MOT, RST>::loop() {
     if (_fault) {
       print_fault();
-      delay(100);
       return;
     }
     if (! _lp_valid) {
       print_lp_valid();
-      delay(100);
       return;
     }
     if (_mode) {
       print_op_mode();
-      delay(100);
       return;
     }
     if (_observation != 0x7f) {
@@ -488,12 +483,14 @@ private:
       get_squal(_squal);
       get_xy(_ux, _uy);
       get_xy_dist(_ux_dist, _uy_dist);
-      print_serial();
-      delay(3);
+      print();
     }
     _moved = 0;
   }
 };
+
+
+
 
 
 
