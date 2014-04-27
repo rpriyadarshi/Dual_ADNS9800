@@ -135,7 +135,7 @@ private:
 
     static int _reset;
   };
-  
+
   template <const int SS, const int MOT, const int RST>
     byte controller<SS, MOT, RST>::_boot_complete = 0;
 
@@ -265,20 +265,20 @@ private:
 
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::update_motion_burst_data() {
-    if(_boot_complete != 9) return;
+    if(_boot_complete != SS) return;
     com_begin();
     read_motion_burst_data();
 
+    _observation = _data[Observation];
     _motion = _data[Motion] & 0x80;
     _fault = _data[Motion] & 0x40;
     _lp_valid = _data[Motion] & 0x20;
-    _mode = _data[Motion] & 0x02;
-    _mode |= (_data[Motion] & 0x04 << 1);
-    _frame_pix_first = _data[Motion] & 0x01;
-    _observation = _data[Observation];
-    _squal = _data[SQUAL];
 
     if (!_fault && _motion && _lp_valid && (_observation == 0x7f)) {
+      _mode = _data[Motion] & 0x02;
+      _mode |= (_data[Motion] & 0x04 << 1);
+      _frame_pix_first = _data[Motion] & 0x01;
+      _squal = _data[SQUAL];
       copy_data();
       _moved = 1;
     }
@@ -360,9 +360,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[7] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                };
     byte regres;
 
     com_begin();
@@ -452,7 +452,7 @@ private:
     perform_startup();  
     display_registers();
     delay(100);
-    _boot_complete=9;
+    _boot_complete=SS;
     reset_xy_dist();
   }
 
@@ -494,6 +494,7 @@ private:
     _moved = 0;
   }
 };
+
 
 
 
