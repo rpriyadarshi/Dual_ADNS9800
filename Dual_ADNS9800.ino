@@ -13,14 +13,20 @@ void setup() {
   SPI.setBitOrder(MSBFIRST);
   SPI.setClockDivider(8);
 
-  ac_a.setup();
   ac_b.setup();
+  ac_a.setup();
+  
+  delay(100);
+  
+  ac_b.finish();
+  ac_a.finish();
 }
 
 void loop() {
   ac_a.loop();
   ac_b.loop();
 }
+
 
 
 

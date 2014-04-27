@@ -81,6 +81,7 @@ public:
     }
 
     void setup();
+    void finish();
     void loop();
 
     virtual void get_xy(uint16_t x, uint16_t y) = 0;
@@ -174,7 +175,9 @@ private:
     void controller<SS, MOT, RST>::reset_xy_dist() {
     _ux = _uy = _ux_dist = _uy_dist = 0;
     _reset = HIGH;
-    Serial.println("# RESET");
+    Serial.print("# [");
+    Serial.print(SS);
+    Serial.println("] RESET");
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -360,9 +363,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    };
     byte regres;
 
     com_begin();
@@ -448,9 +451,11 @@ private:
 
     perform_startup();  
     display_registers();
+  }
 
-    delay(100);
-    _boot_complete=SS;
+  template <const int SS, const int MOT, const int RST>
+    void controller<SS, MOT, RST>::finish() {
+    _boot_complete = SS;
     reset_xy_dist();
   }
 
@@ -488,6 +493,8 @@ private:
     _moved = 0;
   }
 };
+
+
 
 
 
