@@ -227,7 +227,7 @@ private:
 
     // send adress of the register, with MSBit = 1 to indicate it's a write
     SPI.transfer(REG_Motion_Burst & 0x7f);
-    //delayMicroseconds(100); // tSRAD
+    delayMicroseconds(100); // tSRAD
     // read data
     for (int i = 0; i < Pixel_Sum; ++i) {
       _data[i] = SPI.transfer(0);
@@ -269,7 +269,6 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::update_motion_burst_data() {
     if(_boot_complete != SS) return;
-    com_begin();
     read_motion_burst_data();
 
     _observation = _data[Observation];
@@ -285,7 +284,6 @@ private:
       copy_data();
       _moved = 1;
     }
-    com_end();
   }
 
   template <const int SS, const int MOT, const int RST>

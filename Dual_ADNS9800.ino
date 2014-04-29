@@ -11,15 +11,15 @@ void setup() {
   SPI.begin();
   SPI.setDataMode(SPI_MODE3);
   SPI.setBitOrder(MSBFIRST);
-  SPI.setClockDivider(8);
+  SPI.setClockDivider(SPI_CLOCK_DIV4);
 
-  ac_b.setup();
   ac_a.setup();
+  ac_b.setup();
   
   delay(100);
   
-  ac_b.finish();
   ac_a.finish();
+  ac_b.finish();
 }
 
 void loop() {
