@@ -35,7 +35,7 @@ void print_avg(adns_ctrl<SSa, MOTa, RSTa>& a, adns_ctrl<SSb, MOTb, RSTb>& b) {
   Serial.print((ay_dist + by_dist) / 2);
   Serial.print(",");
   Serial.print(micros());
-  Serial.println("");
+  Serial.println(",00000000");
 }
 
 void loop() {

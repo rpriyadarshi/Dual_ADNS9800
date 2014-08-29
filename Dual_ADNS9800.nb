@@ -3,10 +3,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[         0,          0]
-NotebookDataLength[     11369,        252]
-NotebookOptionsPosition[     10803,        227]
-NotebookOutlinePosition[     11156,        243]
-CellTagsIndexPosition[     11113,        240]
+NotebookDataLength[     11581,        253]
+NotebookOptionsPosition[     11015,        228]
+NotebookOutlinePosition[     11368,        244]
+CellTagsIndexPosition[     11325,        241]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -75,23 +75,23 @@ Cell[BoxData[
             RowBox[{"{", 
              RowBox[{
              "\"\<@D\>\"", ",", "4", ",", "_Integer", ",", "_Integer", ",", 
-              "_Integer", ",", "_Integer"}], "}"}]}], "]"}]}], ";", 
-         "\[IndentingNewLine]", 
+              "_Integer", ",", "_Integer", ",", "_Integer"}], "}"}]}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"sen5", "=", 
           RowBox[{"Cases", "[", 
            RowBox[{"csv", ",", 
             RowBox[{"{", 
              RowBox[{
              "\"\<@D\>\"", ",", "5", ",", "_Integer", ",", "_Integer", ",", 
-              "_Integer", ",", "_Integer"}], "}"}]}], "]"}]}], ";", 
-         "\[IndentingNewLine]", 
+              "_Integer", ",", "_Integer", ",", "_Integer"}], "}"}]}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"mean", "=", 
           RowBox[{"Cases", "[", 
            RowBox[{"csv", ",", 
             RowBox[{"{", 
              RowBox[{
-             "\"\<@M\>\"", ",", "_Integer", ",", "_Integer", ",", 
-              "_Integer"}], "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
+             "\"\<@M\>\"", ",", "_Integer", ",", "_Integer", ",", "_Integer", 
+              ",", "_Integer"}], "}"}]}], "]"}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"data4", "=", 
           RowBox[{"Join", "[", 
            RowBox[{"data4", ",", 
@@ -173,11 +173,11 @@ Cell[BoxData[
    3.618191934037237*^9, 3.618192004354693*^9}, {3.618192058766436*^9, 
    3.618192060924736*^9}, {3.618192583898278*^9, 3.618192593111869*^9}, {
    3.6182745668495493`*^9, 3.618274597951779*^9}, {3.618274664622541*^9, 
-   3.618274694912301*^9}}],
+   3.618274694912301*^9}, {3.6182801332115717`*^9, 3.6182801362425137`*^9}}],
 
 Cell[BoxData[
  RowBox[{"Dynamic", "[", 
-  RowBox[{"ListPlot", "[", 
+  RowBox[{"ListLinePlot", "[", 
    RowBox[{"{", 
     RowBox[{
      RowBox[{"data4", "[", 
@@ -206,11 +206,11 @@ Cell[BoxData[
    3.6181918128978777`*^9, 3.618191816125887*^9}, {3.618191850193336*^9, 
    3.618191852209786*^9}, {3.61819201183679*^9, 3.618192015490328*^9}, {
    3.618192595401946*^9, 3.618192597926875*^9}, {3.6182746306176662`*^9, 
-   3.618274680981759*^9}}],
+   3.618274680981759*^9}, {3.6182795330498953`*^9, 3.618279533757272*^9}}],
 
 Cell[BoxData[
  RowBox[{"Dynamic", "[", 
-  RowBox[{"ListPlot", "[", 
+  RowBox[{"ListLinePlot", "[", 
    RowBox[{"{", 
     RowBox[{
      RowBox[{"data4", "[", 
@@ -223,7 +223,8 @@ Cell[BoxData[
       RowBox[{"[", 
        RowBox[{"All", ",", "3"}], "]"}], "]"}]}], "}"}], "]"}], 
   "]"}]], "Input",
- CellChangeTimes->{{3.61827484807683*^9, 3.618274855683035*^9}}]
+ CellChangeTimes->{{3.61827484807683*^9, 3.618274855683035*^9}, {
+  3.6182795369706717`*^9, 3.618279537509531*^9}}]
 },
 WindowSize->{808, 668},
 WindowMargins->{{11, Automatic}, {Automatic, 0}},
@@ -244,9 +245,9 @@ CellTagsIndex->{}
 Notebook[{
 Cell[400, 13, 482, 10, 28, "Input"],
 Cell[885, 25, 1272, 23, 63, "Input"],
-Cell[2160, 50, 6773, 125, 233, "Input"],
-Cell[8936, 177, 1362, 31, 28, "Input"],
-Cell[10301, 210, 498, 15, 28, "Input"]
+Cell[2160, 50, 6878, 125, 233, "Input"],
+Cell[9041, 177, 1414, 31, 28, "Input"],
+Cell[10458, 210, 553, 16, 28, "Input"]
 }
 ]
 *)

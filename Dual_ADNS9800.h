@@ -139,7 +139,7 @@ void adns_ctrl<SS, MOT, RST>::print_squal()
 template <const int SS, const int MOT, const int RST>
 void adns_ctrl<SS, MOT, RST>::print_nl()
 {
-  Serial.println("");
+  Serial.println(",00000000");
 }
 
 template <const int SS, const int MOT, const int RST>
