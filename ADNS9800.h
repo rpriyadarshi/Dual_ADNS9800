@@ -84,16 +84,24 @@ public:
     void finish();
     void loop();
 
-    virtual void get_xy(uint16_t x, uint16_t y) = 0;
-    virtual void get_xy_dist(uint16_t x_sum, uint16_t y_sum) = 0;
-    virtual void get_squal(byte s) = 0;
+    byte get_motion() const;
+    byte get_moved() const;
+    virtual uint16_t get_x() const = 0;
+    virtual uint16_t get_y() const = 0;
+    virtual uint16_t get_x_dist() const = 0;
+    virtual uint16_t get_y_dist() const = 0;
+    virtual uint16_t get_squal() const = 0;
+
+    virtual void set_xy(uint16_t x, uint16_t y) = 0;
+    virtual void set_xy_dist(uint16_t x_sum, uint16_t y_sum) = 0;
+    virtual void set_squal(byte s) = 0;
 
     virtual void clear() = 0;
     virtual void print() = 0;
+    void print_time();
 
     void reset_xy_dist();
 
-protected:
     int16_t convert_twos_compliment(uint16_t u);
 
 private:
@@ -135,6 +143,7 @@ private:
     static byte _moved;
 
     static int _reset;
+    static long _time;
   };
 
   template <const int SS, const int MOT, const int RST>
@@ -170,6 +179,20 @@ private:
 
   template <const int SS, const int MOT, const int RST>
     int controller<SS, MOT, RST>::_reset = HIGH;
+  template <const int SS, const int MOT, const int RST>
+    long controller<SS, MOT, RST>::_time = 0;
+
+  template <const int SS, const int MOT, const int RST>
+    byte controller<SS, MOT, RST>::get_motion() const
+  {
+    return _motion;
+  }
+
+  template <const int SS, const int MOT, const int RST>
+    byte controller<SS, MOT, RST>::get_moved() const
+  {
+    return _moved;
+  }
 
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::reset_xy_dist() {
@@ -361,9 +384,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                };
     byte regres;
 
     com_begin();
@@ -441,6 +464,13 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
+    void controller<SS, MOT, RST>::print_time()
+  {
+    Serial.print(",");
+    Serial.print(_time);
+  }
+
+  template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::setup() {
     pinMode (SS, OUTPUT);
     pinMode (RST, INPUT_PULLUP);
@@ -483,14 +513,18 @@ private:
     if (! _moved) return;
     if(_motion) {
       clear();
-      get_squal(_squal);
-      get_xy(_ux, _uy);
-      get_xy_dist(_ux_dist, _uy_dist);
+      set_squal(_squal);
+      set_xy(_ux, _uy);
+      set_xy_dist(_ux_dist, _uy_dist);
+      _time = micros();
       print();
     }
     _moved = 0;
   }
 };
+
+
+
 
 
 

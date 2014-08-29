@@ -15,9 +15,15 @@ public:
   void setup();
   void loop();
 
-  void get_xy(uint16_t x, uint16_t y);
-  void get_xy_dist(uint16_t x_sum, uint16_t y_sum);
-  void get_squal(byte s);
+  uint16_t get_x() const;
+  uint16_t get_y() const;
+  uint16_t get_x_dist() const;
+  uint16_t get_y_dist() const;
+  uint16_t get_squal() const;
+
+  void set_xy(uint16_t x, uint16_t y);
+  void set_xy_dist(uint16_t x_sum, uint16_t y_sum);
+  void set_squal(byte s);
 
   void clear();
   void print();
@@ -38,21 +44,52 @@ private:
 };
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::get_xy(uint16_t x, uint16_t y)
+uint16_t adns_ctrl<SS, MOT, RST>::get_x() const
+{
+  return _x;
+}
+
+template <const int SS, const int MOT, const int RST>
+uint16_t adns_ctrl<SS, MOT, RST>::get_y() const
+{
+  return _y;
+}
+
+template <const int SS, const int MOT, const int RST>
+uint16_t adns_ctrl<SS, MOT, RST>::get_x_dist() const
+{
+  return _x_dist;
+}
+
+template <const int SS, const int MOT, const int RST>
+uint16_t adns_ctrl<SS, MOT, RST>::get_y_dist() const
+{
+  return _y_dist;
+}
+
+template <const int SS, const int MOT, const int RST>
+uint16_t adns_ctrl<SS, MOT, RST>::get_squal() const
+{
+  return _squal;
+}
+
+
+template <const int SS, const int MOT, const int RST>
+void adns_ctrl<SS, MOT, RST>::set_xy(uint16_t x, uint16_t y)
 {
   _x = x;
   _y = y;
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::get_xy_dist(uint16_t x_dist, uint16_t y_dist)
+void adns_ctrl<SS, MOT, RST>::set_xy_dist(uint16_t x_dist, uint16_t y_dist)
 {
   _x_dist = x_dist;
   _y_dist = y_dist;
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::get_squal(byte s)
+void adns_ctrl<SS, MOT, RST>::set_squal(byte s)
 {
   _squal = s;
 }
@@ -65,9 +102,9 @@ void adns_ctrl<SS, MOT, RST>::clear()
 template <const int SS, const int MOT, const int RST>
 void adns_ctrl<SS, MOT, RST>::print_header()
 {
-  Serial.print("@ ");
+  Serial.print("@D,");
   Serial.print(SS);
-  Serial.print(" ");
+  Serial.print(",");
 }
 
 template <const int SS, const int MOT, const int RST>
@@ -76,9 +113,9 @@ void adns_ctrl<SS, MOT, RST>::print_xy()
   int16_t x = adns::controller<SS, MOT, RST>::convert_twos_compliment(_x);
   int16_t y = adns::controller<SS, MOT, RST>::convert_twos_compliment(_y);
   Serial.print(x);
-  Serial.print(" ");
+  Serial.print(",");
   Serial.print(y);
-  Serial.print(" ");
+  Serial.print(",");
 }
 
 template <const int SS, const int MOT, const int RST>
@@ -87,16 +124,16 @@ void adns_ctrl<SS, MOT, RST>::print_xy_dist()
   int16_t x_dist = adns::controller<SS, MOT, RST>::convert_twos_compliment(_x_dist);
   int16_t y_dist = adns::controller<SS, MOT, RST>::convert_twos_compliment(_y_dist);
   Serial.print(x_dist);
-  Serial.print(" ");
+  Serial.print(",");
   Serial.print(y_dist);
-  Serial.print(" ");
+  Serial.print("");
 }
 
 template <const int SS, const int MOT, const int RST>
 void adns_ctrl<SS, MOT, RST>::print_squal()
 {
   Serial.print(_squal);
-  Serial.print(" ");
+  Serial.print(",");
 }
 
 template <const int SS, const int MOT, const int RST>
@@ -110,8 +147,9 @@ void adns_ctrl<SS, MOT, RST>::print()
 {
   print_header();
   print_squal();
-  print_xy();
+  //print_xy();
   print_xy_dist();
+  adns::controller<SS, MOT, RST>::print_time();
   print_nl();
 }
 
@@ -126,6 +164,7 @@ void adns_ctrl<SS, MOT, RST>::loop()
 {
   adns::controller<SS, MOT, RST>::loop();
 }
+
 
 
 
