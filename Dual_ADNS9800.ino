@@ -2,8 +2,8 @@
 #include <avr/pgmspace.h>
 #include "Dual_ADNS9800.h"
 
-adns_ctrl<4, 0, 6> ac_a;
-adns_ctrl<5, 1, 6> ac_b;
+adns_ctrl<4, 0, 6> ac_b;
+adns_ctrl<5, 1, 6> ac_a;
 
 void setup() {
   Serial.begin(115200);
@@ -28,13 +28,15 @@ void print_avg(adns_ctrl<SSa, MOTa, RSTa>& a, adns_ctrl<SSb, MOTb, RSTb>& b) {
   int16_t bx_dist = b.convert_twos_compliment(b.get_x_dist());
   int16_t ay_dist = a.convert_twos_compliment(a.get_y_dist());
   int16_t by_dist = b.convert_twos_compliment(b.get_y_dist());
+  long a_time = a.get_time();
+  long b_time = b.get_time();
 
   Serial.print("@M,");
   Serial.print((ax_dist + bx_dist) / 2);
   Serial.print(",");
   Serial.print((ay_dist + by_dist) / 2);
   Serial.print(",");
-  Serial.print(micros());
+  Serial.print((a_time + b_time) / 2);
   Serial.println(",00000000");
 }
 

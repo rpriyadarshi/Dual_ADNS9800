@@ -91,6 +91,7 @@ public:
     virtual uint16_t get_x_dist() const = 0;
     virtual uint16_t get_y_dist() const = 0;
     virtual uint16_t get_squal() const = 0;
+    long get_time() const;
 
     virtual void set_xy(uint16_t x, uint16_t y) = 0;
     virtual void set_xy_dist(uint16_t x_sum, uint16_t y_sum) = 0;
@@ -195,6 +196,12 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
+    long controller<SS, MOT, RST>::get_time() const
+  {
+    return _time;
+  }
+
+  template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::reset_xy_dist() {
     _ux = _uy = _ux_dist = _uy_dist = 0;
     _reset = HIGH;
@@ -226,6 +233,7 @@ private:
     delayMicroseconds(1); // tSCLK-_ncs for read operation is 120ns
     com_end();
     delayMicroseconds(19); //  tSRW/tSRR (=20us) minus tSCLK-_ncs
+    data = SPI.transfer(0);
 
     return data;
   }
@@ -384,9 +392,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    };
     byte regres;
 
     com_begin();
@@ -522,6 +530,7 @@ private:
     _moved = 0;
   }
 };
+
 
 
 
