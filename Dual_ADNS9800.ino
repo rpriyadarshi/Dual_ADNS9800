@@ -2,10 +2,75 @@
 #include <avr/pgmspace.h>
 #include "Dual_ADNS9800.h"
 
-adns_ctrl<4, 0, 6> ac_b;
-adns_ctrl<5, 1, 6> ac_a;
+class dual_adns {
+public:
+  dual_adns();
+  ~dual_adns() {
+  }
 
-void setup() {
+  void setup();
+  void loop();
+  void calculate_avg();
+  void print_avg();
+
+private:
+  adns_ctrl<4, 0, 6> _ac_b;
+  adns_ctrl<5, 1, 6> _ac_a;
+
+  struct _adns {
+    int16_t _x_dist;
+    int16_t _y_dist;
+    long _time;
+  };
+  
+  struct _adns_cache {
+    struct _adns _curr;
+    struct _adns _prev;
+  };
+  
+  struct _adns_cache _a;
+  struct _adns_cache _b;
+  struct _adns _avg;
+  long _diff_time;
+};
+
+dual_adns::dual_adns() {
+}
+
+void dual_adns::calculate_avg() {
+  _a._curr._x_dist = _ac_a.convert_twos_compliment(_ac_a.get_x_dist());
+  _b._curr._x_dist = _ac_b.convert_twos_compliment(_ac_b.get_x_dist());
+  _a._curr._y_dist = _ac_a.convert_twos_compliment(_ac_a.get_y_dist());
+  _b._curr._y_dist = _ac_b.convert_twos_compliment(_ac_b.get_y_dist());
+  _a._curr._time = _ac_a.get_time();
+  _b._curr._time = _ac_b.get_time();
+
+  _avg._x_dist = (_a._curr._x_dist + _b._curr._x_dist) / 2;
+  _avg._y_dist = (_a._curr._y_dist + _b._curr._y_dist) / 2;
+  _avg._time = (_a._curr._time + _b._curr._time) / 2;
+  _diff_time = _b._curr._time - _a._curr._time;
+
+  _a._prev._x_dist = _a._curr._x_dist;
+  _b._prev._x_dist = _b._curr._x_dist;
+  _a._prev._y_dist = _a._curr._y_dist;
+  _b._prev._y_dist = _b._curr._y_dist;
+  _a._prev._time = _a._curr._time;
+  _b._prev._time = _b._curr._time;
+}
+
+void dual_adns::print_avg() {  
+  Serial.print("@M,");
+  Serial.print(_avg._x_dist);
+  Serial.print(",");
+  Serial.print(_avg._y_dist);
+  Serial.print(",");
+  Serial.print(_avg._time);
+  Serial.print(",");
+  Serial.print(_diff_time);
+  Serial.println(",00000000");
+}
+
+void dual_adns::setup() {
   Serial.begin(115200);
 
   SPI.begin();
@@ -13,41 +78,32 @@ void setup() {
   SPI.setBitOrder(MSBFIRST);
   SPI.setClockDivider(SPI_CLOCK_DIV4);
 
-  ac_a.setup();
-  ac_b.setup();
+  _ac_a.setup();
+  _ac_b.setup();
 
   delay(100);
 
-  ac_a.finish();
-  ac_b.finish();
+  _ac_a.finish();
+  _ac_b.finish();
 }
 
-template <const int SSa, const int MOTa, const int RSTa, const int SSb, const int MOTb, const int RSTb>
-void print_avg(adns_ctrl<SSa, MOTa, RSTa>& a, adns_ctrl<SSb, MOTb, RSTb>& b) {  
-  int16_t ax_dist = a.convert_twos_compliment(a.get_x_dist());
-  int16_t bx_dist = b.convert_twos_compliment(b.get_x_dist());
-  int16_t ay_dist = a.convert_twos_compliment(a.get_y_dist());
-  int16_t by_dist = b.convert_twos_compliment(b.get_y_dist());
-  long a_time = a.get_time();
-  long b_time = b.get_time();
-
-  Serial.print("@M,");
-  Serial.print((ax_dist + bx_dist) / 2);
-  Serial.print(",");
-  Serial.print((ay_dist + by_dist) / 2);
-  Serial.print(",");
-  Serial.print((a_time + b_time) / 2);
-  Serial.println(",00000000");
-}
-
-void loop() {
-  ac_a.loop();
-  ac_b.loop();
-  if (ac_a.get_moved() || ac_b.get_moved()) {
-    print_avg(ac_a, ac_b);
+void dual_adns::loop() {
+  _ac_a.loop();
+  _ac_b.loop();
+  if (_ac_a.get_moved() || _ac_b.get_moved()) {
+    calculate_avg();
+    print_avg();
   }
 }
 
+dual_adns da;
+void setup() {
+  da.setup();
+}
+
+void loop() {
+  da.loop();
+}
 
 
 
