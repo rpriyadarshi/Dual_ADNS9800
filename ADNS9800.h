@@ -1,7 +1,7 @@
 #include "ADNS9800_SROM_A4.h"
 
 extern const unsigned short firmware_length;
-extern prog_uchar firmware_data[];
+extern const uint8_t firmware_data[];
 
 namespace adns {
   // Registers
@@ -92,18 +92,19 @@ public:
     virtual uint16_t get_y_dist() const = 0;
     virtual uint16_t get_squal() const = 0;
     long get_time() const;
+    int get_reset() const;
 
     virtual void set_xy(uint16_t x, uint16_t y) = 0;
     virtual void set_xy_dist(uint16_t x_sum, uint16_t y_sum) = 0;
     virtual void set_squal(byte s) = 0;
 
     virtual void clear() = 0;
-    virtual void print() = 0;
-    void print_time();
+    virtual void print() const = 0;
+    void print_time() const;
 
     void reset_xy_dist();
 
-    int16_t convert_twos_compliment(uint16_t u);
+    int16_t convert_twos_compliment(uint16_t u) const;
 
 private:
     void upload_firmware();
@@ -119,12 +120,12 @@ private:
     static void update_motion_burst_data();
     static uint16_t join_byte(byte l, byte h);
 
-    void print_observation();
+    void print_observation() const;
 
-    void print_fault();
-    void print_lp_valid();
-    void print_op_mode();
-    void print_frame_pix_first();
+    void print_fault() const;
+    void print_lp_valid() const;
+    void print_op_mode() const;
+    void print_frame_pix_first() const;
 
 private:
     static byte _boot_complete;
@@ -199,6 +200,12 @@ private:
     long controller<SS, MOT, RST>::get_time() const
   {
     return _time;
+  }
+
+  template <const int SS, const int MOT, const int RST>
+    int controller<SS, MOT, RST>::get_reset() const
+  {
+    return _reset;
   }
 
   template <const int SS, const int MOT, const int RST>
@@ -277,7 +284,7 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    int16_t controller<SS, MOT, RST>::convert_twos_compliment(uint16_t b){
+    int16_t controller<SS, MOT, RST>::convert_twos_compliment(uint16_t b) const {
     //Convert from 2's complement
     if (b & 0x8000) {
       //return -1 * ((b ^ 0xffff) + 1);
@@ -344,7 +351,7 @@ private:
     // send all bytes of the firmware
     unsigned char c;
     for(unsigned int i = 0; i < firmware_length; i++){
-      c = (unsigned char)pgm_read_byte(firmware_data + i);
+      c = (unsigned char)pgm_read_byte(::firmware_data + i);
       SPI.transfer(c);
       delayMicroseconds(15);
     }
@@ -392,9 +399,9 @@ private:
   template <const int SS, const int MOT, const int RST>
     void controller<SS, MOT, RST>::display_registers() {
     int oreg[] = { 
-      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     };
+      REG_Product_ID, REG_Inverse_Product_ID, REG_SROM_ID, REG_Motion, REG_LASER_CTRL0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             };
     const char* oregname[] = {
-      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    };
+      "Product_ID","Inverse_Product_ID","SROM_Version","Motion", "LASER_CTRL0"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            };
     byte regres;
 
     com_begin();
@@ -421,7 +428,7 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    void controller<SS, MOT, RST>::print_fault()
+    void controller<SS, MOT, RST>::print_fault() const
   {
     Serial.print("# [");
     Serial.print(SS);
@@ -430,7 +437,7 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    void controller<SS, MOT, RST>::print_lp_valid()
+    void controller<SS, MOT, RST>::print_lp_valid() const
   {
     Serial.print("# [");
     Serial.print(SS);
@@ -441,7 +448,7 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    void controller<SS, MOT, RST>::print_op_mode()
+    void controller<SS, MOT, RST>::print_op_mode() const
   {
     Serial.print("# [");
     Serial.print(SS);
@@ -451,7 +458,7 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    void controller<SS, MOT, RST>::print_frame_pix_first()
+    void controller<SS, MOT, RST>::print_frame_pix_first() const
   {
     Serial.print("# [");
     Serial.print(SS);
@@ -461,7 +468,7 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    void controller<SS, MOT, RST>::print_observation()
+    void controller<SS, MOT, RST>::print_observation() const
   {
     Serial.print("# [");
     Serial.print(SS);
@@ -472,7 +479,7 @@ private:
   }
 
   template <const int SS, const int MOT, const int RST>
-    void controller<SS, MOT, RST>::print_time()
+    void controller<SS, MOT, RST>::print_time() const
   {
     Serial.print(",");
     Serial.print(_time);
@@ -530,6 +537,8 @@ private:
     _moved = 0;
   }
 };
+
+
 
 
 

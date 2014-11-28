@@ -3,10 +3,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[         0,          0]
-NotebookDataLength[     47071,        994]
-NotebookOptionsPosition[     46158,        956]
-NotebookOutlinePosition[     46514,        972]
-CellTagsIndexPosition[     46471,        969]
+NotebookDataLength[     51155,       1080]
+NotebookOptionsPosition[     50049,       1035]
+NotebookOutlinePosition[     50405,       1051]
+CellTagsIndexPosition[     50362,       1048]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -18,13 +18,14 @@ Cell[BoxData[
   RowBox[{"DeviceOpen", "[", 
    RowBox[{"\"\<Serial\>\"", ",", 
     RowBox[{"{", 
-     RowBox[{"\"\</dev/cu.usbserial-A6024CMA\>\"", ",", 
+     RowBox[{"\"\</dev/cu.usbserial-A6024DPX\>\"", ",", 
       RowBox[{"\"\<BaudRate\>\"", "\[Rule]", "115200"}]}], "}"}]}], 
    "]"}]}]], "Input",
  CellChangeTimes->{{3.617677556854624*^9, 3.617677558286501*^9}, {
   3.617677642842619*^9, 3.6176776574351397`*^9}, {3.6178530196434107`*^9, 
   3.617853030777581*^9}, {3.6179194513762197`*^9, 3.617919453293888*^9}, {
-  3.624249689655143*^9, 3.624249692260603*^9}}],
+  3.624249689655143*^9, 3.624249692260603*^9}, {3.6256269025031557`*^9, 
+  3.625626905901496*^9}}],
 
 Cell[BoxData[
  InterpretationBox[
@@ -140,8 +141,8 @@ Cell[BoxData[
                  False]}, Devices`DeviceAPI`DeviceDump`opacities$$ = {
                 Opacity[1], 
                 Opacity[0.2]}, Devices`DeviceAPI`DeviceDump`status$$ = {
-               "Connected (/dev/cu.usbserial-A6024CMA)", 
-                "Not connected (/dev/cu.usbserial-A6024CMA)"}, 
+               "Connected (/dev/cu.usbserial-A6024DPX)", 
+                "Not connected (/dev/cu.usbserial-A6024DPX)"}, 
                Devices`DeviceAPI`DeviceDump`d$$ = DeviceObject[{"Serial", 1}],
                 Devices`DeviceAPI`DeviceDump`ind$$ = 1, 
                Devices`DeviceAPI`DeviceDump`indr$$ = 1}, 
@@ -160,7 +161,7 @@ Cell[BoxData[
                    Part[
                    Devices`DeviceAPI`DeviceDump`opacities$$, 
                     Devices`DeviceAPI`DeviceDump`indr$$]], StandardForm],
-                ImageSizeCache->{218., {5., 9.}}],
+                ImageSizeCache->{216., {5., 9.}}],
                DynamicModuleValues:>{}],
               "SummaryItem"]}], "\[SpanFromLeft]"}
           },
@@ -286,8 +287,8 @@ Cell[BoxData[
                  False]}, Devices`DeviceAPI`DeviceDump`opacities$$ = {
                 Opacity[1], 
                 Opacity[0.2]}, Devices`DeviceAPI`DeviceDump`status$$ = {
-               "Connected (/dev/cu.usbserial-A6024CMA)", 
-                "Not connected (/dev/cu.usbserial-A6024CMA)"}, 
+               "Connected (/dev/cu.usbserial-A6024DPX)", 
+                "Not connected (/dev/cu.usbserial-A6024DPX)"}, 
                Devices`DeviceAPI`DeviceDump`d$$ = DeviceObject[{"Serial", 1}],
                 Devices`DeviceAPI`DeviceDump`ind$$, 
                Devices`DeviceAPI`DeviceDump`indr$$}, 
@@ -370,7 +371,15 @@ Cell[BoxData[
   Editable->False,
   SelectWithContents->True,
   Selectable->False]], "Output",
- CellChangeTimes->{3.624249651178131*^9, 3.624327592161414*^9}]
+ CellChangeTimes->{
+  3.624249651178131*^9, 3.624327592161414*^9, 3.6256290623238707`*^9, 
+   3.625630135061392*^9, 3.625630192552459*^9, 3.6256302324597588`*^9, 
+   3.6256304054829693`*^9, 3.6256304429148283`*^9, 3.625630481358507*^9, 
+   3.625630677489534*^9, 3.625630771993569*^9, 3.6256309565849667`*^9, 
+   3.625631511682321*^9, 3.625631550759021*^9, 3.625631610476363*^9, 
+   3.625631649714448*^9, {3.6256336445858383`*^9, 3.625633660223714*^9}, 
+   3.625633719884343*^9, 3.62563378442668*^9, 3.625633966850231*^9, 
+   3.625634450871367*^9}]
 }, Open  ]],
 
 Cell[BoxData[{
@@ -443,8 +452,8 @@ Cell[BoxData[
             RowBox[{"{", 
              RowBox[{
              "\"\<@M\>\"", ",", "_Integer", ",", "_Integer", ",", "_Integer", 
-              ",", "_Integer", ",", "_Integer"}], "}"}]}], "]"}]}], ";", 
-         "\[IndentingNewLine]", 
+              ",", "_Integer", ",", "_Real", ",", "_Integer"}], "}"}]}], 
+           "]"}]}], ";", "\[IndentingNewLine]", 
          RowBox[{"data4", "=", 
           RowBox[{"Join", "[", 
            RowBox[{"data4", ",", 
@@ -470,10 +479,10 @@ Cell[BoxData[
              RowBox[{"[", 
               RowBox[{"All", ",", 
                RowBox[{"{", 
-                RowBox[{"2", ",", "3", ",", "4", ",", "5"}], "}"}]}], "]"}], 
-             "]"}]}], "]"}]}], ";"}]}], "\[IndentingNewLine]", "]"}]}], "]"}],
-     ",", "\[IndentingNewLine]", "0.1"}], "\[IndentingNewLine]", 
-   "]"}]}]], "Input",
+                RowBox[{"2", ",", "3", ",", "4", ",", "5", ",", "6"}], 
+                "}"}]}], "]"}], "]"}]}], "]"}]}], ";"}]}], 
+       "\[IndentingNewLine]", "]"}]}], "]"}], ",", "\[IndentingNewLine]", 
+    "0.1"}], "\[IndentingNewLine]", "]"}]}]], "Input",
  CellChangeTimes->{{3.617677697889103*^9, 3.617677708113969*^9}, {
    3.6176809937777243`*^9, 3.617680997763239*^9}, {3.617681086546021*^9, 
    3.617681091341304*^9}, {3.617681222005712*^9, 3.617681302408601*^9}, {
@@ -528,7 +537,14 @@ Cell[BoxData[
    3.618192060924736*^9}, {3.618192583898278*^9, 3.618192593111869*^9}, {
    3.6182745668495493`*^9, 3.618274597951779*^9}, {3.618274664622541*^9, 
    3.618274694912301*^9}, {3.6182801332115717`*^9, 3.6182801362425137`*^9}, 
-   3.6243275859198303`*^9, {3.624329726307235*^9, 3.624329727304372*^9}}],
+   3.6243275859198303`*^9, {3.624329726307235*^9, 3.624329727304372*^9}, {
+   3.625629941536504*^9, 3.6256299458542767`*^9}, {3.625630226127207*^9, 
+   3.625630226660631*^9}, {3.625630475086544*^9, 3.6256304759243317`*^9}, {
+   3.625630575364992*^9, 3.625630576591288*^9}, {3.6256306667702007`*^9, 
+   3.625630670512684*^9}, {3.625630766829177*^9, 3.625630767871396*^9}, {
+   3.625630822581427*^9, 3.6256308313841887`*^9}, {3.625631535446116*^9, 
+   3.625631538294051*^9}, {3.62563164427149*^9, 3.6256316452458963`*^9}, {
+   3.625633634910982*^9, 3.625633635669972*^9}}],
 
 Cell[BoxData[
  InterpretationBox[
@@ -651,7 +667,7 @@ dEAPPwB9A46P
             RowBox[{
              TagBox["\<\"Unique ID: \"\>",
               "SummaryItemAnnotation"], "\[InvisibleSpace]", 
-             TagBox["4",
+             TagBox["9",
               "SummaryItem"]}]},
            {
             RowBox[{
@@ -789,7 +805,7 @@ dEAPPwB9A46P
             RowBox[{
              TagBox["\<\"Unique ID: \"\>",
               "SummaryItemAnnotation"], "\[InvisibleSpace]", 
-             TagBox["4",
+             TagBox["9",
               "SummaryItem"]}]},
            {
             RowBox[{
@@ -832,7 +848,7 @@ dEAPPwB9A46P
       ImageSize->Automatic],
      BaselinePosition->Baseline],
     DynamicModuleValues:>{}], "]"}],
-  ScheduledTaskObject[4, 
+  ScheduledTaskObject[9, 
    HoldForm[
     If[
      DeviceExecute[$CellContext`dev, "SerialReadyQ"], 
@@ -856,18 +872,27 @@ $CellContext`mean}, $CellContext`csv = ImportString[
           Blank[Integer], 
           Blank[Integer], 
           Blank[Integer], 
+          Blank[Real], 
           Blank[Integer]}]; $CellContext`data4 = Join[$CellContext`data4, 
          Part[$CellContext`sen4, All, {4, 5, 6}]]; $CellContext`data5 = 
        Join[$CellContext`data5, 
          Part[$CellContext`sen5, All, {4, 5, 6}]]; $CellContext`datam = 
        Join[$CellContext`datam, 
-         Part[$CellContext`mean, All, {2, 3, 4}]]; Null]]], {0.1, 
+         Part[$CellContext`mean, All, {2, 3, 4, 5, 6}]]; Null]]], {0.1, 
     DirectedInfinity[1]}, Automatic, True, "AutoRemove" -> False, 
    "EpilogFunction" :> Null, "Context" -> "Global`"],
   Editable->False,
   SelectWithContents->True,
   Selectable->False]], "Output",
- CellChangeTimes->{3.624249651380452*^9, 3.624327592355226*^9}]
+ CellChangeTimes->{
+  3.624249651380452*^9, 3.624327592355226*^9, 3.625629062546576*^9, 
+   3.625630135308844*^9, 3.625630192822652*^9, 3.625630232690255*^9, 
+   3.625630405730483*^9, 3.625630443170385*^9, 3.625630481555204*^9, 
+   3.6256306776806803`*^9, 3.625630772234535*^9, 3.625630956806136*^9, 
+   3.625631511982195*^9, 3.625631550953477*^9, 3.6256316106632977`*^9, 
+   3.625631649941146*^9, {3.6256336448299627`*^9, 3.625633660441708*^9}, 
+   3.625633720110765*^9, 3.625633784642789*^9, 3.625633967065907*^9, 
+   3.6256344511719303`*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -911,8 +936,16 @@ Cell[BoxData[
      Part[$CellContext`data4, All, {1, 2}], 
      Part[$CellContext`data5, All, {1, 2}], 
      Part[$CellContext`datam, All, {1, 2}]}], StandardForm],
-  ImageSizeCache->{360., {109., 114.}}]], "Output",
- CellChangeTimes->{3.624249651551806*^9, 3.6243275923952723`*^9}]
+  ImageSizeCache->{360., {109., 113.}}]], "Output",
+ CellChangeTimes->{
+  3.624249651551806*^9, 3.6243275923952723`*^9, 3.625629062647778*^9, 
+   3.625630135410494*^9, 3.62563019295181*^9, 3.6256302327894773`*^9, 
+   3.625630405783536*^9, 3.625630443261544*^9, 3.6256304816127577`*^9, 
+   3.62563067773385*^9, 3.625630772328076*^9, 3.62563095685505*^9, 
+   3.625631512056281*^9, 3.625631551027026*^9, 3.625631610775419*^9, 
+   3.625631650000472*^9, {3.625633644875476*^9, 3.625633660466855*^9}, 
+   3.625633720217475*^9, 3.625633784777554*^9, 3.625633967100582*^9, 
+   3.625634451269052*^9}]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -941,9 +974,19 @@ Cell[BoxData[
      Part[$CellContext`data4, All, 3], 
      Part[$CellContext`data5, All, 3], 
      Part[$CellContext`datam, All, 3]}], StandardForm],
-  ImageSizeCache->{360., {101., 106.}}]], "Output",
- CellChangeTimes->{3.624249651629393*^9, 3.624327592471387*^9}]
+  ImageSizeCache->{360., {105., 110.}}]], "Output",
+ CellChangeTimes->{
+  3.624249651629393*^9, 3.624327592471387*^9, 3.625629062681842*^9, 
+   3.625630135503903*^9, 3.625630193064375*^9, 3.62563023287649*^9, 
+   3.625630405963216*^9, 3.625630443317836*^9, 3.625630481684329*^9, 
+   3.625630677811825*^9, 3.6256307723953857`*^9, 3.6256309569326067`*^9, 
+   3.625631512140473*^9, 3.6256315511054564`*^9, 3.625631610869556*^9, 
+   3.625631650074586*^9, {3.625633644952765*^9, 3.625633660560192*^9}, 
+   3.625633720336381*^9, 3.625633784867632*^9, 3.625633967237512*^9, 
+   3.6256344513440323`*^9}]
 }, Open  ]],
+
+Cell[CellGroupData[{
 
 Cell[BoxData[
  RowBox[{"Dynamic", "[", 
@@ -952,7 +995,43 @@ Cell[BoxData[
     RowBox[{"datam", "[", 
      RowBox[{"[", 
       RowBox[{"All", ",", "4"}], "]"}], "]"}], "}"}], "]"}], "]"}]], "Input",
- CellChangeTimes->{{3.624329764750152*^9, 3.624329769499887*^9}}]
+ CellChangeTimes->{{3.624329764750152*^9, 3.624329769499887*^9}}],
+
+Cell[BoxData[
+ DynamicBox[ToBoxes[
+   ListLinePlot[{
+     Part[$CellContext`datam, All, 4]}], StandardForm],
+  ImageSizeCache->{360., {102., 106.}}]], "Output",
+ CellChangeTimes->{
+  3.625629062752527*^9, 3.6256301355948973`*^9, 3.6256301931369867`*^9, 
+   3.62563023296572*^9, 3.625630406183209*^9, 3.625630443384894*^9, 
+   3.625630481726904*^9, 3.625630677850058*^9, 3.625630772465427*^9, 
+   3.6256309569708643`*^9, 3.625631512217537*^9, 3.625631551150589*^9, 
+   3.6256316109789352`*^9, 3.625631650114376*^9, {3.625633644992728*^9, 
+   3.625633660651208*^9}, 3.625633720430562*^9, 3.625633784967375*^9, 
+   3.62563396733138*^9, 3.6256344513895817`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Dynamic", "[", 
+  RowBox[{"ListLinePlot", "[", 
+   RowBox[{"{", 
+    RowBox[{"datam", "[", 
+     RowBox[{"[", 
+      RowBox[{"All", ",", "5"}], "]"}], "]"}], "}"}], "]"}], "]"}]], "Input",
+ CellChangeTimes->{{3.625631631930253*^9, 3.625631632188773*^9}, {
+  3.625633706164896*^9, 3.625633744712529*^9}}],
+
+Cell[BoxData[
+ DynamicBox[ToBoxes[
+   ListLinePlot[{
+     Part[$CellContext`datam, All, 5]}], StandardForm],
+  ImageSizeCache->{360., {107., 112.}}]], "Output",
+ CellChangeTimes->{{3.625633741451548*^9, 3.6256337456568117`*^9}, 
+   3.625633785032181*^9, 3.6256339674241543`*^9, 3.625634451464952*^9}]
+}, Open  ]]
 },
 WindowSize->{808, 668},
 WindowMargins->{{Automatic, 3}, {Automatic, 0}},
@@ -972,23 +1051,30 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[422, 15, 531, 11, 28, "Input"],
-Cell[956, 28, 17228, 344, 70, "Output"]
+Cell[422, 15, 582, 12, 28, "Input"],
+Cell[1007, 29, 17712, 352, 70, "Output"]
 }, Open  ]],
-Cell[18199, 375, 1272, 23, 63, "Input"],
+Cell[18734, 384, 1272, 23, 63, "Input"],
 Cell[CellGroupData[{
-Cell[19496, 402, 6995, 128, 233, "Input"],
-Cell[26494, 532, 16695, 337, 67, "Output"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[43226, 874, 1414, 31, 28, "Input"],
-Cell[44643, 907, 321, 7, 238, "Output"]
+Cell[20031, 411, 7525, 135, 233, "Input"],
+Cell[27559, 548, 17206, 346, 67, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[45001, 919, 553, 16, 28, "Input"],
-Cell[45557, 937, 304, 7, 222, "Output"]
+Cell[44802, 899, 1414, 31, 28, "Input"],
+Cell[46219, 932, 795, 15, 237, "Output"]
 }, Open  ]],
-Cell[45876, 947, 278, 7, 28, "Input"]
+Cell[CellGroupData[{
+Cell[47051, 952, 553, 16, 28, "Input"],
+Cell[47607, 970, 784, 15, 230, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[48428, 990, 278, 7, 28, "Input"],
+Cell[48709, 999, 657, 12, 223, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[49403, 1016, 327, 8, 28, "Input"],
+Cell[49733, 1026, 300, 6, 268, "Output"]
+}, Open  ]]
 }
 ]
 *)

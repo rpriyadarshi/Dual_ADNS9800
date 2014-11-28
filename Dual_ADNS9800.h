@@ -26,14 +26,14 @@ public:
   void set_squal(byte s);
 
   void clear();
-  void print();
+  void print() const;
 
 private:
-  void print_header();
-  void print_xy();
-  void print_xy_dist();
-  void print_squal();
-  void print_nl();
+  void print_header() const;
+  void print_xy() const;
+  void print_xy_dist() const;
+  void print_squal() const;
+  void print_nl() const;
 
 private:
   uint16_t _x;
@@ -100,7 +100,7 @@ void adns_ctrl<SS, MOT, RST>::clear()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_header()
+void adns_ctrl<SS, MOT, RST>::print_header() const
 {
   Serial.print("@D,");
   Serial.print(SS);
@@ -108,7 +108,7 @@ void adns_ctrl<SS, MOT, RST>::print_header()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_xy()
+void adns_ctrl<SS, MOT, RST>::print_xy() const
 {
   int16_t x = adns::controller<SS, MOT, RST>::convert_twos_compliment(_x);
   int16_t y = adns::controller<SS, MOT, RST>::convert_twos_compliment(_y);
@@ -119,7 +119,7 @@ void adns_ctrl<SS, MOT, RST>::print_xy()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_xy_dist()
+void adns_ctrl<SS, MOT, RST>::print_xy_dist() const
 {
   int16_t x_dist = adns::controller<SS, MOT, RST>::convert_twos_compliment(_x_dist);
   int16_t y_dist = adns::controller<SS, MOT, RST>::convert_twos_compliment(_y_dist);
@@ -130,20 +130,20 @@ void adns_ctrl<SS, MOT, RST>::print_xy_dist()
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_squal()
+void adns_ctrl<SS, MOT, RST>::print_squal() const
 {
   Serial.print(_squal);
   Serial.print(",");
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print_nl()
+void adns_ctrl<SS, MOT, RST>::print_nl() const
 {
   Serial.println(",00000000");
 }
 
 template <const int SS, const int MOT, const int RST>
-void adns_ctrl<SS, MOT, RST>::print()
+void adns_ctrl<SS, MOT, RST>::print() const
 {
   print_header();
   print_squal();
